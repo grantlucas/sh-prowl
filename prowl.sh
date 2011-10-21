@@ -27,4 +27,5 @@ call=`curl -s -d "apikey=$API_KEY&application=\"$APPLICATION\"&event=\"$SUBJECT\
 
 echo $call
 
+#TODO: Add an option to supress the use of xmllint incase it's not on a system. people can turn it off
 #TODO: parse the result with xmllint to analyze the response
