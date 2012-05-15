@@ -10,14 +10,16 @@ fi
 
 #Set defaults
 verbose=0
+raw=0
 
 #TODO: Add support for priority
 # process options
-while getopts s:a:v o
+while getopts s:a:vr o
 do  case "$o" in
   s) SUBJECT=$OPTARG;;
   a) APPLICATION=$OPTARG;;
   v) verbose=1;;
+  r) raw=1;;
   esac
 done
 # shift the option values out
@@ -49,22 +51,27 @@ fi
 # Send off the message to prowl
 call=`curl -s -d "apikey=$API_KEY&application=\"$APPLICATION\"&event=\"$SUBJECT\"&description=\"$MESSAGE\"" https://api.prowlapp.com/publicapi/add`
 
-echo $call
+# Display raw output for debugging
+if [ $raw == "1" ]; then
+  echo $call
+fi
 
 # If verbose is set to true, then use xpath to process the response
 if [ $verbose == "1" ]; then
-  #TODO: parse the result with xpath to analyze the response
-  #TODO: only process if xpath is installed
-  #since this script is only for sending a message, we can assume the finding of a success code means it worke
-  success=`echo $call | xpath //success/@code=200 2>/dev/null`
-  if [ $success == "1" ]; then
-    echo "Message sent successfully"
-    exit 0
+  #Only process if xpath is installed
+  xpath=`command -v xpath`
+  if [ ! -z $xpath ]; then
+    #since this script is only for sending a message, we can assume the finding of a success code means it worke
+    success=`echo $call | xpath //success/@code=200 2>/dev/null`
+    if [ $success == "1" ]; then
+      echo "Message sent successfully"
+      exit 0
+    else
+      #FIXME: Display the error code and response text
+      echo "Message sending failed"
+      exit 1
+    fi
   else
-    error_code=`echo $call | xpath //success/@code 2>/dev/null`
-    echo "Message sending failed, error code $error_code"
-    exit 1
+    echo "Verbose output aborted. Xpath is required to process response."
   fi
 fi
-
-exit 0
