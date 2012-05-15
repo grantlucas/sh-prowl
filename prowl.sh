@@ -11,6 +11,7 @@ fi
 #Set defaults
 verbose=0
 
+#TODO: Add support for priority
 # process options
 while getopts s:a:v o
 do  case "$o" in
@@ -45,13 +46,14 @@ if [ -z "$MESSAGE" ]; then
   exit 1
 fi
 
+# Send off the message to prowl
+call=`curl -s -d "apikey=$API_KEY&application=\"$APPLICATION\"&event=\"$SUBJECT\"&description=\"$MESSAGE\"" https://api.prowlapp.com/publicapi/add`
 
-echo $SUBJECT
-echo $APPLICATION
-echo $MESSAGE
-#call=`curl -s -d "apikey=$API_KEY&application=\"$APPLICATION\"&event=\"$SUBJECT\"&description=\"$MESSAGE\"" https://api.prowlapp.com/publicapi/add`
+echo $call
 
-#echo $call
-
-#TODO: Add an option to supress the use of xmllint incase it's not on a system. people can turn it off
-#TODO: parse the result with xmllint to analyze the response
+# If verbose is set to true, then use XMLlint to process the response
+if [ $verbose == "1" ]; then
+  #TODO: parse the result with xmllint to analyze the response
+  #TODO: only process if xmllint is installed
+  echo "process XML response"
+fi
