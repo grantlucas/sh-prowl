@@ -1,5 +1,32 @@
 #!/bin/sh
 
+usage()
+{
+  echo "
+Usage: prowl.sh [-vr] [-s Subject] [-a Application] message
+Try 'prowl.sh -h' for more information."
+  exit 1
+}
+
+help()
+{
+  echo "
+Usage: prowl.sh [-vr] [-s Subject] [-a Application] message
+
+Options:
+  -s SUBJECT (Required)
+    The subject line of the message that is being sent
+  -a APPLICATION (Required)
+    The application the message is coming from
+  -v
+    Displays a success or failure message after receiving response using XPath if XPath is available
+  -r
+    Displays the raw XML output response from Prowl
+  -h
+    Shows this help text"
+  exit 1
+}
+
 #set the API key from the environment variable
 if [ ! -z $PROWL_APIKEY ]; then
   API_KEY=$PROWL_APIKEY
@@ -14,12 +41,14 @@ raw=0
 
 #TODO: Add support for priority
 # process options
-while getopts s:a:vr o
+while getopts s:a:vrh o
 do  case "$o" in
   s) SUBJECT=$OPTARG;;
   a) APPLICATION=$OPTARG;;
   v) verbose=1;;
   r) raw=1;;
+  h) help;;
+[?]) usage;;
   esac
 done
 # shift the option values out
@@ -31,20 +60,21 @@ MESSAGE=$*
 #Ensure subject is supplied as it's required
 if [ -z "$SUBJECT" ]; then
   echo "Subject is required. Use \"-s\" to set it."
-  #TODO: Create function for showing usage text
+  usage
   exit 1
 fi
 
 #Ensure app is supplied as it's required
 if [ -z "$APPLICATION" ]; then
   echo "Application is required. Use \"-a\" to set it."
-  #TODO: Create function for showing usage text
+  usage
   exit 1
 fi
 
 #Ensure that a message was provided after argument parsing
 if [ -z "$MESSAGE" ]; then
   echo "No message was provided to send."
+  usage
   exit 1
 fi
 
