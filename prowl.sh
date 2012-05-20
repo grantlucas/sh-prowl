@@ -49,7 +49,7 @@ if [ -z "$MESSAGE" ]; then
 fi
 
 # Send off the message to prowl
-call=`curl -s -d "apikey=$API_KEY&application=\"$APPLICATION\"&event=\"$SUBJECT\"&description=\"$MESSAGE\"" https://api.prowlapp.com/publicapi/add`
+call=`curl -s -d "apikey=$API_KEY&application=$APPLICATION&event=$SUBJECT&description=$MESSAGE" https://api.prowlapp.com/publicapi/add`
 
 # Display raw output for debugging
 if [ $raw == "1" ]; then
