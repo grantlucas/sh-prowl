@@ -105,14 +105,14 @@ if [ "$verbose" == "1" ]; then
   xpath=`command -v xpath`
   if [ ! -z $xpath ]; then
     #since this script is only for sending a message, we can assume the finding of a success code means it worke
-    success=`echo $call | xpath -e "//success/@code=200" 2>/dev/null`
+    success=`echo $call | xpath "//success/@code=200" 2>/dev/null`
     if [ "$success" == "1" ]; then
       echo "Message sent successfully"
       exit 0
     else
       # display error response code and text!
-	  code=`echo $call | xpath -e "string(//error/@code)" 2>/dev/null`
-	  errmsg=`curl -sL "https://api.prowlapp.com/publicapi/add" | xpath -e "//error/text()" 2>/dev/null`
+	  code=`echo $call | xpath "string(//error/@code)" 2>/dev/null`
+	  errmsg=`curl -sL "https://api.prowlapp.com/publicapi/add" | xpath "//error/text()" 2>/dev/null`
       echo "Message sending failed: $errmsg ($code)"
       exit 1
     fi
