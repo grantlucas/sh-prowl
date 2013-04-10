@@ -1,6 +1,6 @@
 # sh-prowl
 
-A simple shell tool to interact with [Prowl](http://www.prowlapp.com/) using cURL and, if desired, XPath to return information after the request is submitted.
+A simple shell tool to interact with [Prowl](http://www.prowlapp.com/) using cURL and, if desired, sed to return information after the request is submitted.
 
 ## Installation
 
@@ -27,9 +27,13 @@ If the script does not find the API key variable, the script will abort and you 
 
 ### Optional
 
+- p (Priority)
+  - Allows you to change the priority of the message (for example to break through ProwlApp's "quiet mode")
+  - Value from -2 (Very Low) to 2 (Emergency)
+  - Default is 0 (Standard message)
 - v (Verbose)
-  - If this flag is included and XPath is installed on the computer, the response will be processed from Prowl and a success or failure message will be displayed.
-  - If XPath isn't found the verbose output will be aborted.
+  - If this flag is included and sed is installed on the computer, the response will be processed from Prowl and a success or failure message will be displayed.
+  - If sed isn't found the verbose output will be aborted.
 - r (Raw)
   - This flag will display the raw XML output returned from Prowl. This is useful when trying to debug a situation as not all possible error messages have been setup in verbose mode.
 
@@ -37,6 +41,8 @@ If the script does not find the API key variable, the script will abort and you 
 ## Example Input
 
     ./prowl.sh -s Subject -a Application The rest of the string is the main message
+
+    ./prowl.sh -s Subject -a Application -p 2 "This is a very high priority message"
 
     ./prowl.sh -s "Sample Subject" -a "Sample Application" "This example uses quotes to better segment off which strings belong to which section"
 
