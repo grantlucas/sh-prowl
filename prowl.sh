@@ -18,6 +18,8 @@ Options:
     The subject line of the message that is being sent
   -a APPLICATION (Required)
     The application the message is coming from
+  -p {-2 => 2}
+    The priority of the message.
   -v
     Displays a success or failure message after receiving response using XPath if XPath is available
   -r
