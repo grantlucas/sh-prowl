@@ -96,27 +96,25 @@ call=`curl -s -d "apikey=$API_KEY&priority=$PRIORITY&application=$APPLICATION&ev
 
 # Display raw output for debugging
 if [ "$raw" == "1" ]; then
-  echo $call
+  echo "$call"
 fi
 
 # If verbose is set to true, then use xpath to process the response
 if [ "$verbose" == "1" ]; then
-  #Only process if xpath is installed
-  xpath=`command -v xpath`
-  if [ ! -z $xpath ]; then
-    #since this script is only for sending a message, we can assume the finding of a success code means it worke
-    success=`echo $call | xpath "//success/@code=200" 2>/dev/null`
-    if [ "$success" == "1" ]; then
+
+  sed_avail=`command -v sed`
+  if [ ! -z "$sed_avail" ]; then
+    if [[ "$call" =~ "success" ]]; then
       echo "Message sent successfully"
       exit 0
     else
-      # display error response code and text!
-	  code=`echo $call | xpath "string(//error/@code)" 2>/dev/null`
-	  errmsg=`curl -sL "https://api.prowlapp.com/publicapi/add" | xpath "//error/text()" 2>/dev/null`
-      echo "Message sending failed: $errmsg ($code)"
+      # Get the error message and code
+      errmsg=`echo "$call" | sed -n '/error/ s/.*>\(.*\)\<.*/\1/p'`
+      errcode=`echo "$call" | sed -n '/error/ s/.*code=\"\(.*\)".*/\1/p'`
+      echo "Message sending failed: ($errcode) $errmsg"
       exit 1
     fi
   else
-    echo "Verbose output aborted. Xpath is required to process response."
+    echo "Verbose output aborted. Sed is required to process response."
   fi
 fi
