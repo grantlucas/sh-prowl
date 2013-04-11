@@ -111,7 +111,7 @@ if [ "$verbose" == "1" ]; then
       exit 0
     else
       # Get the error message and code
-      errmsg=`echo "$call" | sed -n '/error/ s/.*>\(.*\)\<.*/\1/p'`
+      errmsg=`echo "$call" | sed -n '/error/ s/.*>\([^<]*\)<\/.*/\1/p'`
       errcode=`echo "$call" | sed -n '/error/ s/.*code=\"\(.*\)".*/\1/p'`
       echo "Message sending failed: ($errcode) $errmsg"
       exit 1
